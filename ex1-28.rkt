@@ -1,0 +1,57 @@
+#lang racket
+
+(define (smallest-divisor n)
+  (find-divisor n 2))
+(define (find-divisor n test-divisor)
+  (cond ((> (square test-divisor) n) n)
+        ((divides? test-divisor n) test-divisor)
+        (else (find-divisor n (+ test-divisor 1)))))
+(define (square x) (* x x))
+(define (divides? a n)
+  (if (= (remainder n a) 0) #t #f))
+(define (prime? n)
+  (= (smallest-divisor n) n))
+(smallest-divisor 3)
+(define (expmod base exp m)
+  (cond ((= exp 0) 1)
+        ((even? exp)
+         (remainder (square (expmod base (/ exp 2) m))
+                    m))
+        (else
+         (remainder (*  base (expmod base (- exp 1) m))
+                    m))))
+(define (fermat-test n)
+  (define (try-it a)
+    (= (expmod a n n) a))
+  (try-it (+ 1 (random (- n 1)))))
+(define (fast-prime? n times)
+  (if (= times 0)
+      #t
+      (if (fermat-test n)
+          (fast-prime? n (- times 1))
+          #f)))
+; 全测试
+(define (testall-prime? n)
+  (define (try-it a)
+    (= (expmod a n n) a))
+  (define (try-all a)
+    (if (= a 0)
+        #t
+        (if (try-it a)
+            (try-all (- a 1))
+            #f)))
+  (try-all (- n 1)))
+
+;Miller-Rabin
+(define (miller-rabin-test n)
+  (define (try-it a)
+    (and
+     (not (= (remainder (* a a) n) 1))
+     (= (expmod a (- n 1) n) 1)))
+  (try-it (+ 1 (random (- n 1)))))
+(define (fast2-prime? n t)
+  (if (= t 0)
+      #t
+      (if (miller-rabin-test n)
+          (fast2-prime? n (- t 1))
+          #f)))
