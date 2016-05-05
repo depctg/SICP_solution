@@ -1,5 +1,5 @@
 # SICP_solution
-DepctG's Solutions for the book _Structure and Implemention of Computer Program_
+DepctG's Solutions for the book _Structure and Interpretation of Computer Programs_
 
 ##Process
 
